@@ -1,0 +1,22 @@
+# Kaliel's Tracker changelog
+### 6.6.0
+- ADDED - AddonCompartmentFrame support (button in the upper right corner below the calendar button) - toggle show/hide the tracker
+- ADDED - command &#x27;/kt hide&#x27; for toggle show/hide the tracker
+- ADDED - blocking the opening of Collections frame (Appearances, Pet Journal) during combat
+- ADDED - Tainted frames Hack - open/close tainted frames during combat (Quest Log, Achievements etc.)
+- ADDED - World Map Hack [Beta] - errors are gone, the hack removes call of restricted function SetPassThroughButtons, see Help page 11
+- ADDED - support for WoW 10.2.7
+- ADDED - support for WoW 10.2.6
+- CHANGED - Wowhead popup
+- CHANGED - addon support - RealUI 2.3.14
+- CHANGED - addon support - ElvUI 13.64
+- CHANGED - addon support - TomTom 3.6.2-release
+- CHANGED - addon support - Masque 10.2.7
+- CHANGED - addon support - PetTracker 10.2.7
+- CHANGED (help) - page &quot;What&#x27;s New&quot;
+- CHANGED - Libs
+- FIXED - Edit Mode sometimes stays open
+- FIXED (quests) - error after collapsing a section, when there are Popup quests (2+)
+- PERFORMANCE (quests) - skin Popup quests
+- REMOVED - addon support - SyncUI
+- REMOVED - addon support - SpartanUI
