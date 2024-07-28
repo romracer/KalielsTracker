@@ -181,11 +181,12 @@ local colorNotUsable = { r = 1, g = 0, b = 0 }
 function KT.GameTooltip_AddQuestRewardsToTooltip(tooltip, questID, isBonus)
     local bckSelectedQuestID = C_QuestLog.GetSelectedQuest()  -- backup selected Quest
     C_QuestLog.SetSelectedQuest(questID)  -- for num Choices
+    local QuestCurrencies = C_QuestLog.GetQuestRewardCurrencies(questID) or {} -- for numQuestCurrencies
 
     local xp = GetQuestLogRewardXP(questID)
     local money = GetQuestLogRewardMoney(questID)
     local artifactXP = GetQuestLogRewardArtifactXP(questID)
-    local numQuestCurrencies = GetNumQuestLogRewardCurrencies(questID)
+    local numQuestCurrencies = #QuestCurrencies
     local numQuestRewards = GetNumQuestLogRewards(questID)
     local numQuestSpellRewards, questSpellRewards = KT.GetQuestRewardSpells(questID)
     local numQuestChoices = GetNumQuestLogChoices(questID, true)
@@ -218,7 +219,16 @@ function KT.GameTooltip_AddQuestRewardsToTooltip(tooltip, questID, isBonus)
                 color = isUsable and ITEM_QUALITY_COLORS[quality] or colorNotUsable
             elseif lootType == 1 then
                 -- currency
-                local name, texture, amount, currencyID, quality = GetQuestLogRewardCurrencyInfo(i, questID, true)
+		local function GetQuestLogRewardCurrencyInfo(currencyIndex, questID)
+			local questCurrencies = C_QuestLog.GetQuestRewardCurrencies(questID)
+			questCurrencies = questCurrencies or { }
+			local questRewardCurrencyInfo = questCurrencies[currencyIndex]
+			if (questRewardCurrencyInfo) then
+				return questRewardCurrencyInfo.name, questRewardCurrencyInfo.texture, questRewardCurrencyInfo.baseRewardAmount, questRewardCurrencyInfo.currencyID, questRewardCurrencyInfo.quality
+			end
+		end
+
+                local name, texture, amount, currencyID, quality = GetQuestLogRewardCurrencyInfo(i, questID)
                 amount = FormatLargeNumber(amount)
                 text = format(BONUS_OBJECTIVE_REWARD_WITH_COUNT_FORMAT, texture, HIGHLIGHT_FONT_COLOR:WrapTextInColorCode(amount), name)
                 color = ITEM_QUALITY_COLORS[quality]

@@ -1879,9 +1879,18 @@ local function SetHooks()
 
 	-- QuestUtils.lua
 	function QuestUtils_AddQuestCurrencyRewardsToTooltip(questID, tooltip, currencyContainerTooltip)  -- RO
-		local numQuestCurrencies = GetNumQuestLogRewardCurrencies(questID);
+		local QuestCurrencies = C_QuestLog.GetQuestRewardCurrencies(questID) or { };
+		local numQuestCurrencies = #QuestCurrencies;
 		local currencies = { };
 		local uniqueCurrencyIDs = { };
+		local function GetQuestLogRewardCurrencyInfo(currencyIndex, questID)
+			local questCurrencies = C_QuestLog.GetQuestRewardCurrencies(questID)
+			questCurrencies = questCurrencies or { }
+			local questRewardCurrencyInfo = questCurrencies[currencyIndex]
+			if (questRewardCurrencyInfo) then
+				return questRewardCurrencyInfo.name, questRewardCurrencyInfo.texture, questRewardCurrencyInfo.baseRewardAmount, questRewardCurrencyInfo.currencyID, questRewardCurrencyInfo.quality
+			end
+		end
 		for i = 1, numQuestCurrencies do
 			local name, texture, numItems, currencyID = GetQuestLogRewardCurrencyInfo(i, questID);
 			local rarity = C_CurrencyInfo.GetCurrencyInfo(currencyID).quality;

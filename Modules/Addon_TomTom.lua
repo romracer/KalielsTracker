@@ -5,11 +5,16 @@
 --- This file is part of addon Kaliel's Tracker.
 
 local addonName, KT = ...
+
 local M = KT:NewModule(addonName.."_AddonTomTom")
 KT.AddonTomTom = M
 
 local ACD = LibStub("MSA-AceConfigDialog-3.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
+
+if not QuestPOIGetIconInfo then
+    return
+end
 
 local db
 local mediaPath = "Interface\\AddOns\\"..addonName.."\\Media\\"

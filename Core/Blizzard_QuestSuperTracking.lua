@@ -11,23 +11,50 @@ function SuperTrackEventMixin:OnEvent(event, ...)
 end
 
 function SuperTrackEventMixin:CheckUpdateSuperTracked()
-	local superTrackQuestID = C_SuperTrack.GetSuperTrackedQuestID();
-	if superTrackQuestID and superTrackQuestID == self.superTrackQuestID then
-		if C_QuestLog.ReadyForTurnIn(superTrackQuestID) and not self.isComplete then
+	local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID();
+	if superTrackedQuestID and superTrackedQuestID == self.superTrackedQuestID then
+		if C_QuestLog.ReadyForTurnIn(superTrackedQuestID) and not self.isComplete then
 			KT_QuestSuperTracking_ChooseClosestQuest();
 		end
 	end
 end
 
 function SuperTrackEventMixin:CacheCurrentSuperTrackInfo()
-	self.superTrackQuestID = C_SuperTrack.GetSuperTrackedQuestID();
 	self.isComplete = nil;
-	if self.superTrackQuestID then
-		self.isComplete = C_QuestLog.ReadyForTurnIn(self.superTrackQuestID);
-		self.uiMapID, self.worldQuests, self.worldQuestsElite, self.dungeons, self.treasures = C_QuestLog.GetQuestAdditionalHighlights(self.superTrackQuestID);
+	self.uiMapID = nil;
+	self.worldQuests = nil;
+	self.worldQuestsElite = nil;
+	self.dungeons = nil;
+	self.treasures = nil;
+
+	local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID();
+	self.superTrackedQuestID = superTrackedQuestID;
+	self.superTrackedMapPinType, self.superTrackedMapPinTypeID = C_SuperTrack.GetSuperTrackedMapPin();
+	self.superTrackedVignetteGUID = C_SuperTrack.GetSuperTrackedVignette();
+	self.superTrackedContentType, self.superTrackedContentID = C_SuperTrack.GetSuperTrackedContent();
+
+	if superTrackedQuestID then
+		self.isComplete = C_QuestLog.ReadyForTurnIn(superTrackedQuestID);
+		self.uiMapID, self.worldQuests, self.worldQuestsElite, self.dungeons, self.treasures = C_QuestLog.GetQuestAdditionalHighlights(superTrackedQuestID);
 	end
 
-	EventRegistry:TriggerEvent("Supertracking.OnChanged");
+	EventRegistry:TriggerEvent("Supertracking.OnChanged", self);
+end
+
+function SuperTrackEventMixin:GetSuperTrackedMapPin()
+	return self.superTrackedMapPinType, self.superTrackedMapPinTypeID;
+end
+
+function SuperTrackEventMixin:GetSuperTrackedQuestID()
+	return self.superTrackedQuestID;
+end
+
+function SuperTrackEventMixin:GetSuperTrackedVignette()
+	return self.superTrackedVignetteGUID;
+end
+
+function SuperTrackEventMixin:GetSuperTrackedContent()
+	return self.superTrackedContentType, self.superTrackedContentID;
 end
 
 function KT_QuestSuperTracking_ShouldHighlightWorldQuests(uiMapID)  -- 1

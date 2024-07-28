@@ -716,7 +716,8 @@ end
 
 function KT_ScenarioTrackerProgressBar_GetProgress(self)
 	if (self.criteriaIndex) then
-		return select(4, C_Scenario.GetCriteriaInfo(self.criteriaIndex)) or 0;
+		local criteriaInfo = C_ScenarioInfo.GetCriteriaInfo(self.criteriaIndex);
+		return (criteriaInfo and criteriaInfo.quantity) or 0;
 	else
 		return select(10, C_Scenario.GetStepInfo()) or 0;
 	end
@@ -810,7 +811,16 @@ function KT_SCENARIO_TRACKER_MODULE:AddProgressBar(block, line, criteriaIndex)
 				texture = icon or "Interface\\Icons\\INV_Misc_QuestionMark";
 			end
 			-- currency
-			if ( not texture and GetNumQuestLogRewardCurrencies(rewardQuestID) > 0 ) then
+			local questCurrencies = C_QuestLog.GetQuestRewardCurrencies(rewardQuestID) or { };
+			if ( not texture and #questCurrencies > 0 ) then
+				local function GetQuestLogRewardCurrencyInfo(currencyIndex, questID)
+					local questCurrencies = C_QuestLog.GetQuestRewardCurrencies(questID)
+					questCurrencies = questCurrencies or { }
+					local questRewardCurrencyInfo = questCurrencies[currencyIndex]
+					if (questRewardCurrencyInfo) then
+						return questRewardCurrencyInfo.name, questRewardCurrencyInfo.texture, questRewardCurrencyInfo.baseRewardAmount, questRewardCurrencyInfo.currencyID, questRewardCurrencyInfo.quality
+					end
+				end
 				_, texture = GetQuestLogRewardCurrencyInfo(1, rewardQuestID);
 			end
 			-- money?
@@ -1176,13 +1186,14 @@ function KT_SCENARIO_CONTENT_TRACKER_MODULE:UpdateCriteria(numCriteria, objectiv
 	end
 
 	for criteriaIndex = 1, numCriteria do
-		local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex);
-		if (criteriaString) then
-			if (not isWeightedProgress) then
-				criteriaString = string.format("%d/%d %s", quantity, totalQuantity, criteriaString);
+		local criteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex);
+		if (criteriaInfo) then
+			local criteriaString = criteriaInfo.description;
+			if (not criteriaInfo.isWeightedProgress and not criteriaInfo.isFormatted) then
+				criteriaString = string.format("%d/%d %s", criteriaInfo.quantity, criteriaInfo.totalQuantity, criteriaInfo.description);
 			end
 			KT_SCENARIO_TRACKER_MODULE.lineSpacing = 12;
-			if ( completed ) then
+			if ( criteriaInfo.completed ) then
 				local existingLine = objectiveBlock.lines[criteriaIndex];
 				KT_SCENARIO_TRACKER_MODULE:AddObjective(objectiveBlock, criteriaIndex, criteriaString, nil, nil, KT_OBJECTIVE_DASH_STYLE_SHOW, KT_OBJECTIVE_TRACKER_COLOR["Complete"]);
 				objectiveBlock.currentLine.Icon:Show();
@@ -1199,7 +1210,7 @@ function KT_SCENARIO_CONTENT_TRACKER_MODULE:UpdateCriteria(numCriteria, objectiv
 				objectiveBlock.currentLine.Icon:SetAtlas("Objective-Nub", true);
 			end
 			local line = objectiveBlock.currentLine;
-			if (isWeightedProgress and not completed) then
+			if (criteriaInfo.isWeightedProgress and not criteriaInfo.completed) then
 				KT_SCENARIO_TRACKER_MODULE.lineSpacing = 2;
 				KT_SCENARIO_TRACKER_MODULE:AddProgressBar(objectiveBlock, objectiveBlock.currentLine, criteriaIndex);
 			elseif (line.ProgressBar) then
@@ -1207,8 +1218,8 @@ function KT_SCENARIO_CONTENT_TRACKER_MODULE:UpdateCriteria(numCriteria, objectiv
 			end
 			-- timer bar
 			local line = objectiveBlock.currentLine;
-			if ( duration > 0 and elapsed <= duration ) then
-				KT_SCENARIO_TRACKER_MODULE:AddTimerBar(objectiveBlock, objectiveBlock.currentLine, duration, GetTime() - elapsed);
+			if ( criteriaInfo.duration > 0 and criteriaInfo.elapsed <= criteriaInfo.duration ) then
+				KT_SCENARIO_TRACKER_MODULE:AddTimerBar(objectiveBlock, objectiveBlock.currentLine, criteriaInfo.duration, GetTime() - criteriaInfo.elapsed);
 			elseif ( line.TimerBar ) then
 				KT_SCENARIO_TRACKER_MODULE:FreeTimerBar(objectiveBlock, objectiveBlock.currentLine);
 			end
