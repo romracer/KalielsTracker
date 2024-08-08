@@ -10,6 +10,8 @@
 	<Include file="Libs\LibSharedMedia-3.0\lib.xml"/>
 	<Include file="Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
 	<Include file="Libs\LibSink-2.0\lib.xml"/>
+	<Include file="Libs\HereBeDragons\HereBeDragons-2.0.lua"/>
+	<Include file="Libs\HereBeDragons\HereBeDragons-Pins-2.0.lua"/>
 
 	<Include file="Libs\MSA-Ace-3.0\MSA-Ace-3.0.xml"/>
 	<Include file="Libs\MSA-Event-1.0\MSA-Event-1.0.xml"/>
