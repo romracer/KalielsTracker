@@ -9,6 +9,7 @@ local M = KT:NewModule(addonName.."_AddonTomTom")
 KT.AddonTomTom = M
 
 local ACD = LibStub("MSA-AceConfigDialog-3.0")
+local hbd = LibStub("HereBeDragons-2.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
 
 local db
