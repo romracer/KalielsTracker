@@ -290,7 +290,7 @@ function KT_BonusObjectiveTracker_AddReward(questID, block, xp, money)
 		data.posIndex = block.posIndex;
 		data.objectives = { };
 		local isInArea, isOnMap, numObjectives, taskName, displayAsObjective = GetTaskInfo(questID);
-		for objectiveIndex = 1, numObjectives do
+		for objectiveIndex = 1, (numObjectives or 0) do
 			local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, true);
 			tinsert(data.objectives, text);
 			data.objectiveType = objectiveType;
