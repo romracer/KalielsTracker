@@ -131,7 +131,7 @@ local function AddWaypoint(questID, isSilent)
 		mapID = GetQuestUiMapID(questID)
 		if mapID ~= 0 and KT.GetCurrentMapContinent().mapID == KT.GetMapContinent(mapID).mapID then
 			local function  QuestPOIGetIconInfo(questID)
-				HBDmaps = hbd:GetAllMapIDs()
+				local HBDmaps = hbd:GetAllMapIDs()
 				table.sort(HBDmaps, function(a, b) return a > b end)
 				for _, mapId in ipairs(HBDmaps) do
 					local mapInfo = C_Map.GetMapInfo(mapId)
